@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: v2ex-remote:${ARCH_TAG:-latest}
+    ports:
+      - "5000:5000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./app:/app
+    command: ["/usr/local/bin/gunicorn", "-b", "0.0.0.0:5000", "-w", "4", "remote.app:app"]
