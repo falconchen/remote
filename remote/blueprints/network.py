@@ -7,7 +7,7 @@ import dns.resolver
 import pyipip
 from dns.exception import DNSException
 from flask import Blueprint, current_app, request
-from flask.helpers import is_ip
+import ipaddress
 from sentry_sdk import capture_exception
 
 from remote.wrapper import APIError, error, success
@@ -52,7 +52,9 @@ def ipip(access_ip):
     if ":" in access_ip:
         return error(APIError(message="IPv6 is not supported"))
 
-    if not is_ip(access_ip):
+    try:
+        ipaddress.ip_address(access_ip)
+    except ValueError:
         return error(APIError(message="Invalid IPv4 address provided"))
 
     try:
